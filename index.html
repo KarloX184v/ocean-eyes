@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Player</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 0%, #193c2d 0%, transparent 65%),
+    #101713;
+  color: #e5f5eb;
+  font-family: Arial, sans-serif;
+  padding: 25px 18px;
+}
+
+.container {
+  max-width: 480px;
+  margin: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.logo {
+  color: #8ce6a9;
+  font-size: 19px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.status {
+  font-size: 11px;
+  color: #8eae99;
+}
+
+.song-info {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  margin-bottom: 35px;
+}
+
+.cover {
+  width: 105px;
+  height: 105px;
+  border-radius: 17px;
+  object-fit: cover;
+  background: #254332;
+  box-shadow: 0 8px 25px #0006;
+}
+
+.song-details h1 {
+  font-size: 21px;
+  margin-bottom: 8px;
+}
+
+.song-details p {
+  color: #9ab5a2;
+  font-size: 13px;
+}
+
+.lyrics-box {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 25px 5px;
+  overflow: hidden;
+}
+
+.lyric {
+  font-size: 19px;
+  line-height: 1.6;
+  color: #658371;
+  margin: 9px 0;
+  transition: .3s;
+}
+
+.lyric.active {
+  color: #b5f5c9;
+  font-size: 23px;
+  font-weight: bold;
+  text-shadow: 0 0 18px #54d98555;
+}
+
+.controls {
+  margin-top: 15px;
+  padding: 20px;
+  background: #19251e;
+  border: 1px solid #304b39;
+  border-radius: 20px;
+}
+
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  color: #8fa998;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #83dda1;
+  cursor: pointer;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  color: #dff8e7;
+  background: transparent;
+  font-size: 22px;
+}
+
+.play {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #91e5aa;
+  color: #14251a;
+  font-size: 23px;
+}
+
+.settings {
+  margin-top: 25px;
+  background: #19251e;
+  border: 1px solid #304b39;
+  border-radius: 18px;
+  padding: 17px;
+}
+
+.settings h3 {
+  color: #a6e9b9;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 13px;
+}
+
+.field span {
+  display: block;
+  color: #9bb4a2;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+
+.field input, textarea {
+  width: 100%;
+  background: #101a14;
+  color: #e5f5eb;
+  border: 1px solid #34533e;
+  border-radius: 9px;
+  padding: 11px;
+  outline: none;
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.file-input {
+  font-size: 11px;
+}
+
+.hint {
+  color: #789583;
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+footer {
+  text-align: center;
+  color: #688472;
+  font-size: 11px;
+  margin-top: 25px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">GREEN PLAYER</div>
+    <div class="status">● MUSIC PLAYER</div>
+  </div>
+
+  <div class="song-info">
+    <img id="cover" class="cover"
+      alt="Portada personalizada">
+
+    <div class="song-details">
+      <h1 id="songName">Ocean Eyes</h1>
+      <p id="artist">Billie Eilish</p>
+    </div>
+  </div>
+
+  <div class="lyrics-box" id="lyricsBox">
+    <p class="lyric active">Tu música, tus recuerdos.</p>
+    <p class="lyric">Las letras aparecerán aquí.</p>
+  </div>
+
+  <audio id="audio"></audio>
+
+  <div class="controls">
+    <div class="time-row">
+      <span id="current">0:00</span>
+      <span id="duration">0:00</span>
+    </div>
+
+    <input type="range" id="progress"
+      min="0" max="100" value="0">
+
+    <div class="buttons">
+      <button id="back">↺</button>
+      <button class="play" id="play">▶</button>
+      <button id="restart">↻</button>
+    </div>
+  </div>
+
+  <div class="settings">
+    <h3>PERSONALIZAR REPRODUCTOR</h3>
+
+    <label class="field">
+      <span>Nombre de la canción</span>
+      <input id="nameInput" value="Ocean Eyes">
+    </label>
+
+    <label class="field">
+      <span>Artista</span>
+      <input id="artistInput" value="Billie Eilish">
+    </label>
+
+    <label class="field">
+      <span>Elegir música MP3</span>
+      <input class="file-input" type="file"
+        id="musicFile" accept="audio/*">
+    </label>
+
+    <label class="field">
+      <span>Elegir imagen personalizada</span>
+      <input class="file-input" type="file"
+        id="imageFile" accept="image/*">
+    </label>
+
+    <label class="field">
+      <span>Letras con tiempos</span>
+      <textarea id="lyricsInput">[00:00] Aquí comienza tu canción
+[00:05] Primera frase de ejemplo
+[00:10] Segunda frase de ejemplo
+[00:15] Tercera frase de ejemplo</textarea>
+    </label>
+
+    <p class="hint">
+      Formato: [minutos:segundos] Texto de la línea.
+      Puedes editar los tiempos para sincronizar la letra.
+    </p>
+  </div>
+
+  <footer>GREEN PLAYER · MADE WITH ♥</footer>
+
+</div>
+
+<script>
+const audio = document.getElementById("audio");
+const play = document.getElementById("play");
+const progress = document.getElementById("progress");
+
+const lyricsInput = document.getElementById("lyricsInput");
+const lyricsBox = document.getElementById("lyricsBox");
+
+let lyrics = [];
+let activeIndex = -1;
+let musicURL = null;
+let imageURL = null;
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds)) return "0:00";
+  let min = Math.floor(seconds / 60);
+  let sec = Math.floor(seconds % 60);
+  return min + ":" + String(sec).padStart(2, "0");
+}
+
+function loadLyrics() {
+  lyrics = lyricsInput.value.split("\n")
+    .map(line => {
+      const match = line.match(
+        /^\[(\d{1,2}):(\d{2})\]\s*(.*)$/
+      );
+
+      if (!match) return null;
+
+      return {
+        time: Number(match[1]) * 60 + Number(match[2]),
+        text: match[3]
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.time - b.time);
+
+  activeIndex = -1;
+  lyricsBox.innerHTML = "";
+
+  lyrics.forEach((line, index) => {
+    const p = document.createElement("p");
+    p.className = "lyric";
+    p.textContent = line.text;
+    p.dataset.index = index;
+    lyricsBox.appendChild(p);
+  });
+}
+
+function updateLyrics() {
+  let index = -1;
+
+  for (let i = 0; i < lyrics.length; i++) {
+    if (audio.currentTime >= lyrics[i].time) {
+      index = i;
+    } else {
+      break;
+    }
+  }
+
+  if (index !== activeIndex) {
+    activeIndex = index;
+
+    document.querySelectorAll(".lyric").forEach((el, i) => {
+      el.classList.toggle("active", i === index);
+    });
+
+    const current = document.querySelector(
+      `.lyric[data-index="${index}"]`
+    );
+
+    if (current) {
+      current.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }
+}
+
+play.addEventListener("click", async () => {
+  if (!audio.src) {
+    alert("Primero selecciona una canción MP3.");
+    return;
+  }
+
+  if (audio.paused) {
+    try {
+      await audio.play();
+      play.textContent = "Ⅱ";
+    } catch (error) {
+      alert("No se pudo reproducir el audio.");
+    }
+  } else {
+    audio.pause();
+    play.textContent = "▶";
+  }
+});
+
+audio.addEventListener("ended", () => {
+  play.textContent = "▶";
+});
+
+audio.addEventListener("timeupdate", () => {
+  document.getElementById("current").textContent =
+    formatTime(audio.currentTime);
+
+  if (audio.duration) {
+    progress.value =
+      audio.currentTime / audio.duration * 100;
+  }
+
+  updateLyrics();
+});
+
+audio.addEventListener("loadedmetadata", () => {
+  document.getElementById("duration").textContent =
+    formatTime(audio.duration);
+});
+
+progress.addEventListener("input", () => {
+  if (audio.duration) {
+    audio.currentTime =
+      progress.value / 100 * audio.duration;
+  }
+});
+
+document.getElementById("back").onclick = () => {
+  audio.currentTime = Math.max(0, audio.currentTime - 10);
+};
+
+document.getElementById("restart").onclick = () => {
+  audio.currentTime = 0;
+};
+
+document.getElementById("musicFile").onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (musicURL) URL.revokeObjectURL(musicURL);
+
+  musicURL = URL.createObjectURL(file);
+  audio.src = musicURL;
+  audio.load();
+  play.textContent = "▶";
+};
+
+document.getElementById("imageFile").onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (imageURL) URL.revokeObjectURL(imageURL);
+
+  imageURL = URL.createObjectURL(file);
+  document.getElementById("cover").src = imageURL;
+};
+
+document.getElementById("nameInput").oninput = e => {
+  document.getElementById("songName").textContent = e.target.value;
+};
+
+document.getElementById("artistInput").oninput = e => {
+  document.getElementById("artist").textContent = e.target.value;
+};
+
+lyricsInput.addEventListener("input", loadLyrics);
+
+loadLyrics();
+</script>
+</body>
+</html>
+
